@@ -180,7 +180,7 @@ export function centerOnMapPoint(mapX, mapY, newScale) {
 }
 
 /**
- * Reset view to fit or center the map (initial state).
+ * Reset view: fit map in viewport, aligned top-left (no blank space on left or top).
  * @param {number} mapWidth
  * @param {number} mapHeight
  */
@@ -189,7 +189,7 @@ export function resetView(mapWidth, mapHeight) {
   const r = viewportEl.getBoundingClientRect();
   const fitScale = Math.min(r.width / mapWidth, r.height / mapHeight, 1.2);
   scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, fitScale * 0.95));
-  translateX = (r.width - mapWidth * scale) / 2;
-  translateY = (r.height - mapHeight * scale) / 2;
+  translateX = 0;
+  translateY = 0;
   applyTransform();
 }
