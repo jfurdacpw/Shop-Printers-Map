@@ -2,27 +2,6 @@
 
 A single-page **Printer Locator** that shows a top-down PDF floorplan with printer pins. Pan and zoom the map, search printers, click pins for details, and use **Edit mode** to place new pins by clicking the map and copying `xPct`/`yPct` into `printers.json`.
 
-## Run locally
-
-1. Put your floorplan PDF at **`/assets/floorplan.pdf`** (see [Floorplan](#floorplan) below).
-2. From the project root, start a local server (required for ES modules and `fetch`):
-
-   ```bash
-   python -m http.server 8000
-   ```
-
-3. Open **http://localhost:8000** in your browser.
-
-## GitHub Pages
-
-1. Push the repo to GitHub.
-2. **Settings → Pages**
-3. Under **Build and deployment**, choose **Deploy from a branch**.
-4. Branch: **main**, folder: **/ (root)**.
-5. Save. The site will be at `https://<username>.github.io/<repo>/`.
-
-All paths are relative, so it works from the repo root on GitHub Pages.
-
 ## Adding printers
 
 1. Open the app and enable **Edit mode** in the left panel.
