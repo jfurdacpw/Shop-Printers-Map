@@ -1,6 +1,17 @@
 [
-  {"id": "office", "name": "Office Printer", "room": "Front Office", "note": "Near reception", "xPct": 0.62, "yPct": 0.41},
-  {"id": "breakroom", "name": "Break Room Printer", "room": "Break Room", "note": "By the coffee machine", "xPct": 0.35, "yPct": 0.55},
-  {"id": "warehouse", "name": "Warehouse Printer", "room": "Warehouse", "note": "Shipping labels", "xPct": 0.78, "yPct": 0.72},
-  {"id": "conference", "name": "Conference Room", "room": "Conference A", "note": "For meetings", "xPct": 0.48, "yPct": 0.28}
+  {"id": "design-printer-lexmark", "name": "Design Printer (Lexmark)", "xPct": 0.5, "yPct": 0.5},
+  {"id": "lexmark-front-house", "name": "Lexmark Front House", "xPct": 0.5, "yPct": 0.5},
+  {"id": "design-plotter", "name": "Design Plotter", "xPct": 0.5, "yPct": 0.5},
+  {"id": "design-labels-2in", "name": "Design Labels 2in", "xPct": 0.5, "yPct": 0.5},
+  {"id": "office-brother", "name": "Office Brother", "xPct": 0.5, "yPct": 0.5},
+  {"id": "office-canon", "name": "Office Canon", "xPct": 0.5, "yPct": 0.5},
+  {"id": "zebra-label-shoppc1", "name": "Zebra Label on ShopPC1.CPW.LAN", "xPct": 0.5, "yPct": 0.5},
+  {"id": "zebra-test-printer", "name": "Zebra test Printer", "xPct": 0.5, "yPct": 0.5},
+  {"id": "receiving-printer", "name": "Receiving Printer", "xPct": 0.5, "yPct": 0.5},
+  {"id": "receiving-labels-4in", "name": "Receiving Labels 4in", "xPct": 0.5, "yPct": 0.5},
+  {"id": "shipping-labels-2in", "name": "Shipping Labels 2in", "xPct": 0.5, "yPct": 0.5},
+  {"id": "receiving-labels-2in", "name": "Receiving Labels 2in", "xPct": 0.5, "yPct": 0.5},
+  {"id": "hp-office-jet-pro", "name": "Hp Office Jet Pro", "xPct": 0.5, "yPct": 0.5},
+  {"id": "shipping-printer", "name": "Shipping Printer", "xPct": 0.5, "yPct": 0.5},
+  {"id": "loft-brother", "name": "Loft Brother", "xPct": 0.5, "yPct": 0.5}
 ]
