@@ -5,7 +5,10 @@
 import { getMapSize, getPinsContainer } from './pdfMap.js';
 import { getTransform } from './panzoom.js';
 
-const PRINTERS_URL = 'assets/printers.json';
+/** Resolve assets relative to the page (works on GitHub Pages and local server). */
+function getPrintersUrl() {
+  return new URL('assets/printers.json', document.baseURI || window.location.href).href;
+}
 
 /** @type {Array<{ id: string, name: string, room?: string, note?: string, xPct: number, yPct: number }>} */
 let printers = [];
@@ -19,8 +22,9 @@ let editMode = false;
  * @returns {Promise<typeof printers>}
  */
 export async function loadPrinters() {
-  const res = await fetch(PRINTERS_URL);
-  if (!res.ok) throw new Error(`Failed to load ${PRINTERS_URL}: ${res.status}`);
+  const url = getPrintersUrl();
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to load printers.json: ${res.status}`);
   printers = await res.json();
   return printers;
 }

@@ -7,7 +7,10 @@ import * as panzoom from './panzoom.js';
 import * as pins from './pins.js';
 import { initUI, refreshPrinterList } from './ui.js';
 
-const FLOORPLAN_URL = 'assets/floorplan.pdf';
+// Resolve relative to the page (works on GitHub Pages and local server)
+function getFloorplanUrl() {
+  return new URL('assets/floorplan.pdf', document.baseURI || window.location.href).href;
+}
 
 /** Show a short toast message. */
 function showToast(message) {
@@ -62,12 +65,13 @@ async function main() {
   // Init pan/zoom before loading so viewport is ready (edit mode skips pan)
   panzoom.initPanZoom({ getIsEditMode: () => pins.isEditMode() });
 
-  // Load PDF
+  // Load PDF (use full URL so it resolves correctly from any base path)
+  const floorplanUrl = getFloorplanUrl();
   try {
-    await loadPDF(FLOORPLAN_URL);
+    await loadPDF(floorplanUrl);
   } catch (err) {
     console.error('Failed to load PDF:', err);
-    showToast('Could not load floorplan.pdf — check that it exists in /assets/');
+    showToast('Could not load floorplan.pdf — check /assets/floorplan.pdf exists. See console.');
     return;
   }
 
