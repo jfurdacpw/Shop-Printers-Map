@@ -1,83 +1,55 @@
 # Printer Locator
 
-Interactive 3D “Printer Locator” web app for your building: Three.js scene with a building model and clickable printer markers. Static site, no backend; runs on GitHub Pages.
-
-## Features
-
-- **3D building model** (`building.glb`) with orbit controls and auto-framing on load
-- **Printer markers** at coordinates from `assets/printers.json` (search, list, hover tooltip, click for info card)
-- **Left panel**: search box, printer list (click to focus camera + highlight), “Show all / Reset view”
-- **Optional**: marker pulse for selected printer; “Copy coordinates” dev mode to log clicked 3D position
-
-## Project structure
-
-```
-/
-├── index.html          # Main page
-├── src/
-│   ├── main.js         # Three.js scene, GLB loading, markers, raycasting
-│   └── ui.js           # Panel, search, list, tooltip, info card
-├── assets/
-│   ├── building.glb    # Building model (add your own)
-│   └── printers.json   # Printer list with coordinates
-└── README.md
-```
-
-## Editing printer coordinates
-
-Edit `assets/printers.json`. Each printer has:
-
-- `id` (optional): unique id; if omitted, `name` is used for list selection
-- `name`: display name
-- `x`, `y`, `z`: position in the same coordinate system as your building model
-- `department` (optional): shown in the info card
-- `notes` (optional): shown in the info card
-
-To find coordinates: enable **“Copy coordinates (dev)”** in the left panel, click on the building in the 3D view, and read the logged `{ x, y, z }` in the browser console. Use those values in `printers.json`.
+A single-page **Printer Locator** that shows a top-down PDF floorplan with printer pins. Pan and zoom the map, search printers, click pins for details, and use **Edit mode** to place new pins by clicking the map and copying `xPct`/`yPct` into `printers.json`.
 
 ## Run locally
 
-No build step. Use any static server so that `assets/` and `src/` are served correctly.
+1. Put your floorplan PDF at **`/assets/floorplan.pdf`** (see [Floorplan](#floorplan) below).
+2. From the project root, start a local server (required for ES modules and `fetch`):
 
-**Option A – Python:**
+   ```bash
+   python -m http.server 8000
+   ```
 
-```bash
-# From repo root
-python -m http.server 8000
-```
+3. Open **http://localhost:8000** in your browser.
 
-Then open: http://localhost:8000
+## GitHub Pages
 
-**Option B – Node (npx serve):**
+1. Push the repo to GitHub.
+2. **Settings → Pages**
+3. Under **Build and deployment**, choose **Deploy from a branch**.
+4. Branch: **main**, folder: **/ (root)**.
+5. Save. The site will be at `https://<username>.github.io/<repo>/`.
 
-```bash
-npx serve
-```
+All paths are relative, so it works from the repo root on GitHub Pages.
 
-Then open the URL shown (e.g. http://localhost:3000).
+## Adding printers
 
-## Deploy on GitHub Pages
+1. Open the app and enable **Edit mode** in the left panel.
+2. Click on the map where the printer should be. A toast shows the position and a JSON snippet is logged to the console (and copied to the clipboard if allowed).
+3. Add or edit an entry in **`/assets/printers.json`** using the copied `xPct` and `yPct` (values between 0 and 1). Example:
 
-1. Push this repo to GitHub.
-2. In the repo: **Settings → Pages**.
-3. Under **Source**, choose **Deploy from a branch**.
-4. Branch: `main` (or your default), folder: **/ (root)**.
-5. Save. The site will be at:
+   ```json
+   {"id": "new-printer", "name": "New Printer", "room": "Room 101", "note": "Optional note", "xPct": 0.62, "yPct": 0.41}
+   ```
 
-   `https://<your-username>.github.io/<repo-name>/`
+4. Reload the page to see the new pin.
 
-All asset and script paths are relative (`./assets/...`, `./src/...`), so the app works when opened at that base URL.
+## Floorplan
 
-## Adding the building model
+- Place your single-page PDF at **`/assets/floorplan.pdf`**.
+- If the file is missing, the app will show an error and the map will not load. Create the **`assets`** folder if needed and add a PDF named **`floorplan.pdf`** (any single-page top-down floorplan).
 
-Place your GLB file at:
+## Project structure
 
-**`assets/building.glb`**
+- **`index.html`** — Entry page, viewport, left panel, info card, toast.
+- **`src/app.js`** — Bootstraps PDF, printers, pan/zoom, pins, UI, edit-mode handler.
+- **`src/pdfMap.js`** — PDF.js (CDN) load and render page 1 to canvas; map size.
+- **`src/panzoom.js`** — Pan (pointer) and zoom (wheel/pinch); transform on map layer.
+- **`src/pins.js`** — Load `printers.json`, render pins, tooltips, highlight, edit-mode click → `xPct`/`yPct`.
+- **`src/ui.js`** — Search, printer list, reset view, edit toggle, info card.
+- **`src/styles.css`** — Layout and styling.
+- **`assets/printers.json`** — Printer list (id, name, room, note, xPct, yPct).
+- **`assets/floorplan.pdf`** — Your floorplan (you provide this).
 
-If the file is missing, the app still loads; the console will show a load error and only the printer markers (and axes) will be visible. Adjust printer `x,y,z` to match your model’s scale and origin.
-
-## Tech
-
-- Plain HTML/CSS/JS, ES modules only
-- Three.js (CDN: three.module.js, OrbitControls, GLTFLoader)
-- No framework or build step
+No build step; plain HTML/CSS/JS with ES modules.

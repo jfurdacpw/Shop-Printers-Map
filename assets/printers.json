@@ -1,29 +1,6 @@
 [
-  {
-    "id": "printer-1",
-    "name": "Main Office Printer",
-    "x": 2,
-    "y": 1,
-    "z": 0,
-    "department": "Office",
-    "notes": "Color laser; A4 and letter."
-  },
-  {
-    "id": "printer-2",
-    "name": "Lab Printer",
-    "x": -1.5,
-    "y": 0.8,
-    "z": 2,
-    "department": "Lab",
-    "notes": "B&W high-volume."
-  },
-  {
-    "id": "printer-3",
-    "name": "Reception Printer",
-    "x": 0,
-    "y": 1.2,
-    "z": -1.5,
-    "department": "Reception",
-    "notes": "Multifunction; scan and copy."
-  }
+  {"id": "office", "name": "Office Printer", "room": "Front Office", "note": "Near reception", "xPct": 0.62, "yPct": 0.41},
+  {"id": "breakroom", "name": "Break Room Printer", "room": "Break Room", "note": "By the coffee machine", "xPct": 0.35, "yPct": 0.55},
+  {"id": "warehouse", "name": "Warehouse Printer", "room": "Warehouse", "note": "Shipping labels", "xPct": 0.78, "yPct": 0.72},
+  {"id": "conference", "name": "Conference Room", "room": "Conference A", "note": "For meetings", "xPct": 0.48, "yPct": 0.28}
 ]

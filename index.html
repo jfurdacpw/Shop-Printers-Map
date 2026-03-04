@@ -4,75 +4,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Printer Locator</title>
-  <style>
-    * { box-sizing: border-box; }
-    html, body { margin: 0; height: 100%; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; }
-    #canvas-container { position: absolute; inset: 0; }
-    #panel {
-      position: absolute; left: 0; top: 0; bottom: 0; width: 280px;
-      background: rgba(18, 18, 22, 0.92); color: #e4e4e7;
-      display: flex; flex-direction: column; padding: 12px; gap: 10px;
-      box-shadow: 4px 0 20px rgba(0,0,0,0.3);
-    }
-    #panel h1 { margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 600; }
-    #search { width: 100%; padding: 8px 10px; border: 1px solid #3f3f46; border-radius: 6px; background: #27272a; color: #fff; font-size: 14px; }
-    #search::placeholder { color: #71717a; }
-    #search:focus { outline: none; border-color: #6366f1; }
-    #printer-list { flex: 1; overflow-y: auto; list-style: none; margin: 0; padding: 0; }
-    #printer-list li {
-      padding: 10px 12px; margin-bottom: 4px; border-radius: 6px; cursor: pointer;
-      background: #27272a; border: 1px solid transparent;
-    }
-    #printer-list li:hover { background: #3f3f46; }
-    #printer-list li.active { background: #312e81; border-color: #6366f1; }
-    #reset-view { padding: 10px; border: none; border-radius: 6px; background: #3f3f46; color: #e4e4e7; cursor: pointer; font-size: 14px; }
-    #reset-view:hover { background: #52525b; }
-    #dev-toggle { margin-top: auto; font-size: 12px; color: #71717a; }
-    #dev-toggle label { cursor: pointer; display: flex; align-items: center; gap: 6px; }
-    #tooltip {
-      position: fixed; padding: 6px 10px; background: rgba(0,0,0,0.85); color: #fff;
-      border-radius: 6px; font-size: 13px; pointer-events: none; z-index: 100;
-      max-width: 220px; display: none;
-    }
-    #info-card {
-      position: fixed; left: 292px; top: 50%; transform: translateY(-50%);
-      width: 260px; padding: 16px; background: rgba(18, 18, 22, 0.95); color: #e4e4e7;
-      border-radius: 8px; border: 1px solid #3f3f46; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-      z-index: 50; display: none;
-    }
-    #info-card.visible { display: block; }
-    #info-card h3 { margin: 0 0 8px 0; font-size: 1rem; }
-    #info-card .department { color: #a1a1aa; font-size: 13px; margin-bottom: 6px; }
-    #info-card .notes { font-size: 13px; line-height: 1.4; color: #d4d4d8; }
-    #info-card-close { position: absolute; top: 8px; right: 10px; background: none; border: none; color: #71717a; cursor: pointer; font-size: 18px; line-height: 1; }
-    #info-card-close:hover { color: #fff; }
-  </style>
+  <link rel="stylesheet" href="src/styles.css">
 </head>
 <body>
-  <div id="canvas-container"></div>
-  <div id="panel">
-    <h1>Printer Locator</h1>
-    <input type="text" id="search" placeholder="Search printers…" autocomplete="off">
-    <ul id="printer-list"></ul>
-    <button type="button" id="reset-view">Show all / Reset view</button>
-    <div id="dev-toggle"><label><input type="checkbox" id="dev-coords"> Copy coordinates (dev): log click position</label></div>
-  </div>
-  <div id="tooltip"></div>
-  <div id="info-card">
-    <button type="button" id="info-card-close" aria-label="Close">&times;</button>
-    <h3 id="info-name"></h3>
-    <div class="department" id="info-department"></div>
-    <div class="notes" id="info-notes"></div>
+  <div class="app">
+    <!-- Left panel: search, list, controls -->
+    <aside class="panel">
+      <h1>Printer Locator</h1>
+      <div class="search-wrap">
+        <input type="text" id="search" class="search" placeholder="Search printers…" autocomplete="off">
+      </div>
+      <ul id="printer-list" class="printer-list" role="listbox"></ul>
+      <div class="panel-actions">
+        <button type="button" id="reset-view" class="btn">Reset view</button>
+        <label class="toggle-wrap">
+          <input type="checkbox" id="edit-mode" class="toggle">
+          <span>Edit mode</span>
+        </label>
+      </div>
+    </aside>
+
+    <!-- Map viewport: canvas + pin overlay, pan/zoom applied to inner wrapper -->
+    <main class="viewport-wrap">
+      <div id="viewport" class="viewport">
+        <div id="map-layer" class="map-layer">
+          <canvas id="pdf-canvas"></canvas>
+          <div id="pins-container" class="pins-container"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Info card (shown when a pin is clicked) -->
+    <div id="info-card" class="info-card hidden" role="dialog" aria-label="Printer details">
+      <button type="button" id="info-close" class="info-close" aria-label="Close">×</button>
+      <div id="info-content"></div>
+    </div>
+
+    <!-- Toast for edit mode (xPct, yPct) -->
+    <div id="toast" class="toast hidden"></div>
   </div>
 
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
-    }
-  }
-  </script>
-  <script type="module" src="./src/main.js"></script>
+  <script type="module" src="src/app.js"></script>
 </body>
 </html>
