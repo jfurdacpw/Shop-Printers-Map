@@ -1,0 +1,29 @@
+[
+  {
+    "id": "printer-1",
+    "name": "Main Office Printer",
+    "x": 2,
+    "y": 1,
+    "z": 0,
+    "department": "Office",
+    "notes": "Color laser; A4 and letter."
+  },
+  {
+    "id": "printer-2",
+    "name": "Lab Printer",
+    "x": -1.5,
+    "y": 0.8,
+    "z": 2,
+    "department": "Lab",
+    "notes": "B&W high-volume."
+  },
+  {
+    "id": "printer-3",
+    "name": "Reception Printer",
+    "x": 0,
+    "y": 1.2,
+    "z": -1.5,
+    "department": "Reception",
+    "notes": "Multifunction; scan and copy."
+  }
+]
