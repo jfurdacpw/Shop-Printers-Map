@@ -1,26 +1,21 @@
 /**
- * Pins: load printers.json, render pins on the map, tooltips, highlight, edit-mode click → xPct/yPct.
+ * Pins: load printers.json, render SVG map pins, tooltips, highlight, edit-mode click.
  */
 
 import { getMapSize, getPinsContainer } from './pdfMap.js';
 import { getTransform } from './panzoom.js';
 
-/** Resolve assets relative to the page (works on GitHub Pages and local server). */
 function getPrintersUrl() {
   return new URL('assets/printers.json', document.baseURI || window.location.href).href;
 }
 
-/** @type {Array<{ id: string, name: string, room?: string, note?: string, xPct: number, yPct: number }>} */
+/** @type {Array<{ id: string, name: string, area?: string, note?: string, xPct: number, yPct: number }>} */
 let printers = [];
 let highlightedId = null;
 let onPinClick = null;
 let onEditModeClick = null;
 let editMode = false;
 
-/**
- * Load printers from JSON.
- * @returns {Promise<typeof printers>}
- */
 export async function loadPrinters() {
   const url = getPrintersUrl();
   const res = await fetch(url);
@@ -29,33 +24,43 @@ export async function loadPrinters() {
   return printers;
 }
 
-/**
- * Get current printers list (optionally filtered by search).
- * @param {string} [search] - Optional search string to filter.
- */
 export function getPrinters(search = '') {
   if (!search.trim()) return printers;
   const s = search.trim().toLowerCase();
   return printers.filter(
     (p) =>
       (p.name && p.name.toLowerCase().includes(s)) ||
-      (p.note && p.note.toLowerCase().includes(s)) ||
-      (p.room && p.room.toLowerCase().includes(s))
+      (p.area && p.area.toLowerCase().includes(s)) ||
+      (p.note && p.note.toLowerCase().includes(s))
   );
 }
 
-/**
- * Get a single printer by id.
- * @param {string} id
- */
 export function getPrinterById(id) {
   return printers.find((p) => p.id === id);
 }
 
-/**
- * Render pins into the pins container. Call after PDF is rendered and container size is set.
- * Pins are positioned with percent (xPct, yPct) so they stay correct when map is transformed.
- */
+function makePinSVG() {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 22 30');
+  svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  svg.setAttribute('aria-hidden', 'true');
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('class', 'pin-body');
+  // Teardrop: circle top, pointed bottom
+  path.setAttribute('d', 'M11 0C6.03 0 2 4.03 2 9c0 6.75 9 21 9 21s9-14.25 9-21c0-4.97-4.03-9-9-9z');
+
+  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  circle.setAttribute('class', 'pin-dot');
+  circle.setAttribute('cx', '11');
+  circle.setAttribute('cy', '9');
+  circle.setAttribute('r', '3.5');
+
+  svg.appendChild(path);
+  svg.appendChild(circle);
+  return svg;
+}
+
 export function renderPins() {
   const container = getPinsContainer();
   const size = getMapSize();
@@ -69,13 +74,13 @@ export function renderPins() {
     const pin = document.createElement('button');
     pin.type = 'button';
     pin.className = 'pin';
+    if (p.id === highlightedId) pin.classList.add('highlight');
     pin.dataset.id = p.id;
     pin.setAttribute('aria-label', p.name);
-    pin.title = p.name;
+    pin.appendChild(makePinSVG());
+
     pin.style.left = `${(p.xPct ?? 0.5) * 100}%`;
     pin.style.top = `${(p.yPct ?? 0.5) * 100}%`;
-    pin.style.marginLeft = '-12px';
-    pin.style.marginTop = '-12px';
 
     pin.addEventListener('mouseenter', () => showTooltip(pin, p.name));
     pin.addEventListener('mouseleave', hideTooltip);
@@ -100,7 +105,7 @@ function showTooltip(pinEl, text) {
     if (!tooltipEl) return;
     const r = pinEl.getBoundingClientRect();
     tooltipEl.style.left = `${r.left + r.width / 2}px`;
-    tooltipEl.style.top = `${r.top - 4}px`;
+    tooltipEl.style.top = `${r.top - 6}px`;
     tooltipEl.style.transform = 'translate(-50%, -100%)';
   };
   update();
@@ -116,10 +121,6 @@ function hideTooltip() {
   }
 }
 
-/**
- * Highlight one pin by id; remove highlight if id is null.
- * @param {string | null} id
- */
 export function highlightPin(id) {
   highlightedId = id;
   const container = getPinsContainer();
@@ -129,37 +130,20 @@ export function highlightPin(id) {
   });
 }
 
-/**
- * Register callback when a pin is clicked (for info card).
- * @param {(printer: { id: string, name: string, room?: string, note?: string }) => void} fn
- */
 export function setOnPinClick(fn) {
   onPinClick = fn;
 }
 
-/**
- * Enable or disable edit mode. When on, clicking the map captures xPct/yPct.
- * @param {boolean} on
- */
 export function setEditMode(on) {
   editMode = on;
   const viewport = document.getElementById('viewport');
   if (viewport) viewport.classList.toggle('edit-mode', on);
 }
 
-/**
- * Register callback for edit-mode map click (receives { xPct, yPct }).
- * @param {(coords: { xPct: number, yPct: number }) => void} fn
- */
 export function setOnEditModeClick(fn) {
   onEditModeClick = fn;
 }
 
-/**
- * Handle click on the viewport in edit mode: compute xPct/yPct and call onEditModeClick.
- * @param {number} clientX
- * @param {number} clientY
- */
 export function handleEditModeMapClick(clientX, clientY) {
   const viewport = document.getElementById('viewport');
   const size = getMapSize();
@@ -174,9 +158,6 @@ export function handleEditModeMapClick(clientX, clientY) {
   if (onEditModeClick) onEditModeClick({ xPct, yPct });
 }
 
-/**
- * Check if edit mode is on.
- */
 export function isEditMode() {
   return editMode;
 }

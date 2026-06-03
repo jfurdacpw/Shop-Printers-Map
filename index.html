@@ -8,23 +8,67 @@
 </head>
 <body>
   <div class="app">
-    <!-- Left panel: search, list, controls -->
+    <!-- Left panel -->
     <aside class="panel">
-      <h1>Printer Locator</h1>
-      <div class="search-wrap">
-        <input type="text" id="search" class="search" placeholder="Search printers…" autocomplete="off">
+      <div class="panel-header">
+        <div class="panel-logo" aria-hidden="true">
+          <!-- Printer icon -->
+          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 2h8v3H4V2zM2 6h12a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-1v2H4v-2H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1zm9 2a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5zM5 10h6v3H5v-3z"/>
+          </svg>
+        </div>
+        <span class="panel-title">Printer Locator</span>
       </div>
-      <ul id="printer-list" class="printer-list" role="listbox"></ul>
-      <div class="panel-actions">
-        <button type="button" id="reset-view" class="btn">Reset view</button>
-        <label class="toggle-wrap">
-          <input type="checkbox" id="edit-mode" class="toggle">
-          <span>Edit mode</span>
-        </label>
+
+      <div class="panel-body">
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04-.8.8-3.3-3.78zm-5.943-2.065a4.5 4.5 0 1 0 6.364-6.364 4.5 4.5 0 0 0-6.364 6.364z"/>
+          </svg>
+          <input type="text" id="search" class="search" placeholder="Search printers…" autocomplete="off">
+        </div>
+
+        <ul id="printer-list" class="printer-list" role="listbox"></ul>
+
+        <div class="panel-actions">
+          <button type="button" id="reset-view" class="btn">Reset view</button>
+          <label class="toggle-wrap">
+            <span>Edit mode</span>
+            <span class="toggle-switch">
+              <input type="checkbox" id="edit-mode">
+              <span class="toggle-track">
+                <span class="toggle-thumb"></span>
+              </span>
+            </span>
+          </label>
+        </div>
+
+        <!-- Edit form: visible only in edit mode -->
+        <div id="edit-form" class="edit-form hidden">
+          <div class="edit-form-header">
+            <span class="edit-form-title">Add Printer</span>
+            <button type="button" id="edit-form-clear" class="edit-form-clear" title="Clear form">✕</button>
+          </div>
+          <div id="edit-coords" class="edit-coords">Click the map to capture position</div>
+          <div class="edit-field">
+            <label for="edit-name">Name</label>
+            <input type="text" id="edit-name" placeholder="e.g. Design Plotter">
+          </div>
+          <div class="edit-field">
+            <label for="edit-area">Area</label>
+            <input type="text" id="edit-area" placeholder="e.g. Design, Office, Receiving">
+          </div>
+          <div class="edit-field">
+            <label for="edit-note">Note</label>
+            <textarea id="edit-note" rows="2" placeholder="Optional note…"></textarea>
+          </div>
+          <pre id="edit-json" class="edit-json"></pre>
+          <button type="button" id="edit-copy" class="btn btn-accent">Copy JSON</button>
+        </div>
       </div>
     </aside>
 
-    <!-- Map viewport: canvas + pin overlay, pan/zoom applied to inner wrapper -->
+    <!-- Map viewport -->
     <main class="viewport-wrap">
       <div id="viewport" class="viewport">
         <div id="map-layer" class="map-layer">
@@ -36,12 +80,15 @@
 
     <!-- Info card (shown when a pin is clicked) -->
     <div id="info-card" class="info-card hidden" role="dialog" aria-label="Printer details">
-      <button type="button" id="info-close" class="info-close" aria-label="Close">×</button>
-      <div id="info-content"></div>
+      <div class="info-card-header">
+        <p class="info-card-name" id="info-card-name"></p>
+        <button type="button" id="info-close" class="info-close" aria-label="Close">✕</button>
+      </div>
+      <div id="info-card-body" class="info-card-body"></div>
     </div>
 
-    <!-- Toast for edit mode (xPct, yPct) -->
-    <div id="toast" class="toast hidden"></div>
+    <!-- Toast -->
+    <div id="toast" class="toast hidden" role="status"></div>
   </div>
 
   <script type="module" src="src/app.js"></script>
